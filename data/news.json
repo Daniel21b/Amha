@@ -1,0 +1,20 @@
+{
+    "news": [
+        {
+            "date": "2024-12-16",
+            "title_en": "First News Article",
+            "title_am": "የመጀመሪያው ዜና",
+            "content_en": "This is the content of our first news article in English...",
+            "content_am": "ይህ የመጀመሪያው የዜና ርዕስ ይዘት በአማርኛ...",
+            "image": "../images/news1.jpg"
+        },
+        {
+            "date": "2024-12-15",
+            "title_en": "Second News Article",
+            "title_am": "ሁለተኛው ዜና",
+            "content_en": "This is the content of our second news article in English...",
+            "content_am": "ይህ ሁለተኛው የዜና ርዕስ ይዘት በአማርኛ...",
+            "image": "../images/news2.jpg"
+        }
+    ]
+}
