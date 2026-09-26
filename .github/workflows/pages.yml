@@ -1,0 +1,80 @@
+name: Publish The Unquiet Horn
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  schedule:
+    - cron: '17,47 * * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - name: Read Pages URL
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Restore public feed and translation cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/pages/public-cache.json
+          key: pages-v1-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: pages-v1-${{ runner.os }}-
+      - name: Build all pages and refresh feeds
+        run: npm run build
+        env:
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
+          GOOGLE_TRANSLATE_API_KEY: ${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
+          TRANSLATOR_KEY: ${{ secrets.TRANSLATOR_KEY }}
+          TRANSLATOR_REGION: ${{ secrets.TRANSLATOR_REGION }}
+          TRANSLATION_CHARACTERS_PER_MINUTE: ${{ vars.TRANSLATION_CHARACTERS_PER_MINUTE }}
+          RELIEFWEB_APPNAME: ${{ vars.RELIEFWEB_APPNAME }}
+          OHCHR_RSS_URL: ${{ vars.OHCHR_RSS_URL }}
+          AMNESTY_RSS_URL: ${{ vars.AMNESTY_RSS_URL }}
+          HRW_RSS_URL: ${{ vars.HRW_RSS_URL }}
+          ADDIS_STANDARD_RSS_URL: ${{ vars.ADDIS_STANDARD_RSS_URL }}
+          ETHIOPIA_INSIGHT_RSS_URL: ${{ vars.ETHIOPIA_INSIGHT_RSS_URL }}
+          ALLAFRICA_RSS_URL: ${{ vars.ALLAFRICA_RSS_URL }}
+      - name: Save public cache for the next refresh
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/pages/public-cache.json
+          key: pages-v1-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Upload only the generated website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

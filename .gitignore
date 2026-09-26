@@ -6,3 +6,5 @@ data/*.sqlite*
 test-results/
 playwright-report/
 .DS_Store
+.site/
+.cache/

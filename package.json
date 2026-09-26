@@ -1,5 +1,5 @@
 {
-  "name": "the-civic-ledger",
+  "name": "the-unquiet-horn",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,9 @@
     "aggregate": "node --env-file-if-exists=.env app/aggregate.mjs",
     "test": "node --test tests/*.test.mjs",
     "check": "node app/validate.mjs",
-    "review-translation": "node app/review-translation.mjs"
+    "review-translation": "node app/review-translation.mjs",
+    "build": "node --env-file-if-exists=.env app/static-build.mjs",
+    "preview": "node app/preview-static.mjs"
   },
   "dependencies": {
     "fast-xml-parser": "^5.5.0",
