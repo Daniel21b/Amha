@@ -22,6 +22,11 @@ export function saveItems(db,items){
 export function listItems(db,{source='',category='',limit=60}={}){
  return db.prepare(`SELECT * FROM field_items WHERE (?='' OR source=?) AND (?='' OR category=?) ORDER BY COALESCE(date,aggregatedAt) DESC LIMIT ?`).all(source,source,category,category,Math.min(100,Math.max(1,Number(limit)||60)));
 }
+// Keep selected newsroom reports available even when high-volume feeds dominate.
+export function listPageItems(db){
+ const items=[...listItems(db),...['Addis Standard','Addis Standard via AllAfrica','The Reporter Ethiopia'].flatMap(source=>listItems(db,{source,limit:12}))];
+ return [...new Map(items.map(item=>[item.link,item])).values()].sort((a,b)=>(Date.parse(b.date||b.aggregatedAt)||0)-(Date.parse(a.date||a.aggregatedAt)||0));
+}
 export function saveStatus(db,s){
  db.prepare(`INSERT INTO source_status VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET status=excluded.status,lastAttempt=excluded.lastAttempt,lastSuccess=COALESCE(excluded.lastSuccess,source_status.lastSuccess),error=excluded.error,itemCount=excluded.itemCount`).run(s.id,s.name,s.status,s.lastAttempt,s.lastSuccess||null,s.error||null,s.itemCount||0);
 }

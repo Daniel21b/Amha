@@ -3,7 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {parse,parseFragment,serialize} from 'parse5';
 import {articles as originals,validateArticle} from './content.mjs';
-import {openDatabase,listItems,saveItems,saveStatus} from './db.mjs';
+import {openDatabase,listPageItems,listItems,saveItems,saveStatus} from './db.mjs';
 import {aggregate,sources} from './feeds.mjs';
 import {renderPage} from './views.mjs';
 import {translatePage} from './page-translation.mjs';
@@ -16,7 +16,7 @@ const textOf=node=>node.nodeName==='#text'?node.value:(node.childNodes||[]).map(
 const xml=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const categoryNames=['politics-governance','human-rights','conflict-security','press-freedom','economy','regional','opinion-analysis','explainers','verification'];
 const regionNames=['national','tigray','amhara','oromia','somali','afar'];
-export function staticRoutes(articles=originals){return ['', 'about','support','members','corrections','methodology','search','verification',...categoryNames.map(c=>`category/${c}`),...regionNames.map(r=>`region/${r}`),...articles.map(a=>`article/${a.slug}`)];}
+export function staticRoutes(articles=originals){return ['', 'about','support','members','voices','corrections','methodology','search','verification',...categoryNames.map(c=>`category/${c}`),...regionNames.map(r=>`region/${r}`),...articles.map(a=>`article/${a.slug}`)];}
 
 // Only these public tables are cached. Correction submissions are never read or exported.
 export function exportPublicCache(db){return {
@@ -74,7 +74,7 @@ export async function buildSite({outDir=resolve('.site'),cacheFile=resolve('.cac
  try{
   await importCache(db,seedFile);await importCache(db,cacheFile);
   if(refresh)await aggregate(db,sources(),fetcher);
-  const fieldItems=listItems(db);const statuses=sources().map(s=>db.prepare('SELECT * FROM source_status WHERE id=?').get(s.id)||{id:s.id,name:s.name,status:'configuration_required',error:'No successful build fetch yet.'});
+  const fieldItems=listPageItems(db);const statuses=sources().map(s=>db.prepare('SELECT * FROM source_status WHERE id=?').get(s.id)||{id:s.id,name:s.name,status:'configuration_required',error:'No successful build fetch yet.'});
   await rm(outDir,{recursive:true,force:true});await mkdir(outDir,{recursive:true});await cp(resolve('public'),outDir,{recursive:true});
   const write=async(path,html)=>{const filename=resolve(outDir,'.'+path,'index.html');await mkdir(dirname(filename),{recursive:true});await writeFile(filename,html);};
   for(const language of languages){

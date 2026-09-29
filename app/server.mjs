@@ -4,7 +4,7 @@ import {resolve,extname,sep} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {articles} from './content.mjs';
-import {openDatabase,listItems} from './db.mjs';
+import {openDatabase,listPageItems,listItems} from './db.mjs';
 import {aggregate,sources} from './feeds.mjs';
 import {cachedTranslation,languages} from './translation.mjs';
 import {renderPage} from './views.mjs';
@@ -57,7 +57,7 @@ export function createApp(db=openDatabase(),{translationFetcher=fetch}={}){
   }
   const parts=url.pathname.split('/').filter(Boolean),language=parts[0];
   if(!languages.includes(language))return respond(res,404,'Page not found. <a href="/en/">Return to The Unquiet Horn</a>','text/html');
-  let valid=parts.length===1||(['about','members','support','corrections','methodology','verification','search'].includes(parts[1])&&parts.length===2);
+  let valid=parts.length===1||(['about','members','support','voices','corrections','methodology','verification','search'].includes(parts[1])&&parts.length===2);
   if(parts[1]==='category'&&parts.length===3&&categories.has(parts[2]))valid=true;
   if(parts[1]==='region'&&parts.length===3&&regions.has(parts[2].toLowerCase()))valid=true;
   const selected=parts[1]==='article'&&parts.length===3?articles.find(a=>a.slug===parts[2]):null;
@@ -65,7 +65,7 @@ export function createApp(db=openDatabase(),{translationFetcher=fetch}={}){
   if(!valid)return respond(res,404,'Page not found. <a href="/en/">Return to The Unquiet Horn</a>','text/html');
   const localized=articles.map(a=>language==='en'?a:cachedTranslation(db,a,language)||a);
   const statuses=sources().map(s=>db.prepare('SELECT * FROM source_status WHERE id=?').get(s.id)||{id:s.id,name:s.name,status:'configuration_required',error:'First update has not completed.',itemCount:0});
-  const fieldItems=listItems(db);
+  const fieldItems=listPageItems(db);
   let html;
   if(language!=='en'&&req.method!=='HEAD'){
    const protectedTexts=new Set(articles.flatMap(a=>[a.byline,...a.sources.map(source=>source.publisher)]));

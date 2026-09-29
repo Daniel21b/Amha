@@ -32,6 +32,7 @@ export function sources(){return [
  {id:'amnesty',name:'Amnesty International',kind:'rss',url:process.env.AMNESTY_RSS_URL||'https://www.amnesty.org/en/latest/feed/'},
  {id:'hrw',name:'Human Rights Watch',kind:'rss',url:process.env.HRW_RSS_URL||'https://www.hrw.org/rss/news'},
  {id:'addis-standard',name:'Addis Standard',kind:'rss',url:process.env.ADDIS_STANDARD_RSS_URL||'https://addisstandard.com/feed/',ethiopiaOnly:true},
+ {id:'reporter',name:'The Reporter Ethiopia',kind:'rss',url:process.env.REPORTER_RSS_URL||'https://www.thereporterethiopia.com/feed/',ethiopiaOnly:true},
  {id:'ethiopia-insight',name:'Ethiopia Insight',kind:'rss',url:process.env.ETHIOPIA_INSIGHT_RSS_URL||'https://www.ethiopia-insight.com/feed/',ethiopiaOnly:true},
  {id:'allafrica',name:'AllAfrica',kind:'rss',url:process.env.ALLAFRICA_RSS_URL||'https://allafrica.com/tools/headlines/rdf/ethiopia/headlines.rdf',ethiopiaOnly:true}
  ];}
@@ -47,7 +48,11 @@ export async function fetchSource(s,fetcher=fetch){
   options={method:'POST',body:JSON.stringify({filter:{field:'country.iso3',value:'eth'},fields:{include:['title','date.original','url','source.name']},sort:['date:desc'],limit:30}),headers:{'Content-Type':'application/json'}};
  }
  if(s.kind==='gdelt')for(const[k,v]of Object.entries({query:'Ethiopia (rights OR conflict OR government)',mode:'artlist',format:'json',maxrecords:'30',sort:'datedesc',timespan:'7d'}))url.searchParams.set(k,v);
- const response=await fetcher(url,{...options,signal:AbortSignal.timeout(15000),headers:{'User-Agent':'UnquietHorn/1.0 (attributed news metadata aggregator)',...options.headers}});
+ const request=()=>fetcher(url,{...options,signal:AbortSignal.timeout(15000),headers:{'User-Agent':'UnquietHorn/1.0 (attributed news metadata aggregator)',...options.headers}});
+ let response=await request();
+ // A 304 without conditional request headers supplies no usable feed body.
+ // Retry once with a fresh cache key; publisher errors still preserve saved items.
+ if(response.status===304){url.searchParams.set('_unquiet_refresh',String(Date.now()));response=await request();}
  if(!response.ok)throw Error(`Publisher returned HTTP ${response.status}`);
  const body=await limitedText(response);
  if(s.kind==='rss')return parseRSS(body,s);

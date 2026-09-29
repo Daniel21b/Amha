@@ -51,6 +51,7 @@ jobs:
           OHCHR_RSS_URL: ${{ vars.OHCHR_RSS_URL }}
           AMNESTY_RSS_URL: ${{ vars.AMNESTY_RSS_URL }}
           HRW_RSS_URL: ${{ vars.HRW_RSS_URL }}
+          REPORTER_RSS_URL: ${{ vars.REPORTER_RSS_URL }}
           ADDIS_STANDARD_RSS_URL: ${{ vars.ADDIS_STANDARD_RSS_URL }}
           ETHIOPIA_INSIGHT_RSS_URL: ${{ vars.ETHIOPIA_INSIGHT_RSS_URL }}
           ALLAFRICA_RSS_URL: ${{ vars.ALLAFRICA_RSS_URL }}

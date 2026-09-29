@@ -72,3 +72,11 @@ npm test
 ```
 
 Tests cover editorial structure, feed parsing/failures, translation escaping/cache behavior, the legacy local server, public correction-draft encoding, static routes/assets on custom domains and repository paths, search, translation builds and exclusion of private data. Browser checks should use the static preview when assessing what will be deployed.
+
+## Sources & voices
+
+`/:language/voices/` and the homepage preview feature selected Ethiopian newsrooms and social accounts, led by Addis Standard and Meseret Media. The Reporter Ethiopia's RSS feed is connected; `REPORTER_RSS_URL` can override it. Addis Standard feed failures remain visible, and available AllAfrica syndication keeps its original attribution. General feed volume does not crowd these publishers out of the source section. Inclusion does not establish a reporter's location or verify every claim.
+
+Edit `voiceSources` and `selectedPosts` in `app/voices.mjs` to manage links, then commit and push. For a selected public Facebook or Instagram post, add `{id, sourceId, platform, url, label}` with a real post URL and a supported source ID. Instagram supports `/p/SHORTCODE/` and `/reel/SHORTCODE/`; Facebook supports `/PAGE/posts/POST_ID` and `permalink.php?story_fbid=...&id=...`. Do not paste arbitrary embed HTML or secrets. No Instagram posts are currently configured. The supplied X posts are neutral links; their contents were not accessible for verification and their event descriptions are not republished.
+
+Known Facebook Pages have optional click-to-load previews using Facebook's official Page plugin. These are platform-hosted previews, not a new imported feed or a guarantee that a logged-out visitor can see every post. Private, deleted, restricted or otherwise unavailable content may not display; original links stay visible. No Facebook/Instagram iframe loads until the reader requests it. Changing the list of sources does not automatically discover all their social posts.

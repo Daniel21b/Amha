@@ -11,6 +11,40 @@
     form.querySelector('[data-translation-progress]').textContent=button.dataset.i18nLoading;
     form.setAttribute('aria-busy','true');
   });
+  document.querySelectorAll('[data-load-post]').forEach(button => button.addEventListener('click', () => {
+    const container = button.closest('[data-social-post]');
+    const status = container.querySelector('.voice-embed-status');
+    const frameSlot = container.querySelector('.voice-embed-frame');
+    let url;
+    try {
+      url = new URL(button.dataset.embedUrl);
+      const facebook = url.hostname === 'www.facebook.com' && ['/plugins/post.php', '/plugins/page.php'].includes(url.pathname);
+      const instagram = url.hostname === 'www.instagram.com' && /^\/(?:p|reel)\/[A-Za-z0-9_-]+\/embed\/?$/.test(url.pathname);
+      if (url.protocol !== 'https:' || url.username || url.password || url.port || (!facebook && !instagram)) throw new Error('Unsupported embed');
+    } catch {
+      status.textContent = button.dataset.i18nError;
+      return;
+    }
+    button.disabled = true;
+    status.textContent = button.dataset.i18nLoading;
+    const frame = document.createElement('iframe');
+    frame.title = button.dataset.i18nTitle;
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox');
+    frame.addEventListener('load', () => { status.textContent = button.dataset.i18nLoaded; });
+    frame.addEventListener('error', () => {
+      status.textContent = button.dataset.i18nError;
+      button.disabled = false;
+      button.textContent = button.dataset.i18nRetry;
+    });
+    frame.src = url.href;
+    frameSlot.replaceChildren(frame);
+    // Cross-origin login/privacy screens do not reliably emit an error event.
+    // Keep the original link visible and explain the fallback even in that case.
+    setTimeout(() => {
+      if (status.textContent === button.dataset.i18nLoading) status.textContent = button.dataset.i18nLoaded;
+    }, 12000);
+  }));
   const menu = document.querySelector('.menu-button');
   if (menu) menu.addEventListener('click', () => {
     const expanded = menu.getAttribute('aria-expanded') !== 'true';
