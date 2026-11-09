@@ -17,6 +17,31 @@ const unEscalation=source('un-september-2026','UN Secretary-General statement on
 const amnestyEscalation=source('amnesty-august-2026','Tigray residents at renewed risk as violence returns','https://www.amnesty.org/en/latest/news/2026/08/ethiopia-tigray-residents-at-renewed-risk-of-human-rights-violations-as-violence-returns-to-the-region/','Amnesty International','2026-08-03');
 const eritreaContext=source('ap-eritrea-2026','Abiy’s vision of Ethiopia includes a seaport in Eritrea. Some see a looming conflict','https://apnews.com/article/01542a9d7954e0d2f94a7dbe7b00340e','Associated Press','2026-02-28');
 export const articles=[
+ {
+  ...base,
+  slug:'reporter-suspension-public-right-to-know',
+  title:'Silencing the Reporter is a damning attack on the public’s right to know',
+  deck:'HRW reports the indefinite suspension of the Reporter. Our view: a government that restricts independent information undermines the public’s ability to hold it accountable.',
+  category:'press-freedom',region:'National',type:'Original opinion',
+  date:'2026-11-09',byline:'The Unquiet Horn · Editorial perspective',
+  dateline:'COMMENTARY · PRESS FREEDOM',readMinutes:3,
+  sources:[source('hrw-reporter-november-2026','Ethiopian Authorities Suspend Independent Newspaper','https://www.hrw.org/news/2026/11/03/ethiopian-authorities-suspend-independent-newspaper','Human Rights Watch','2026-11-03')],
+  sourceIds:['hrw-reporter-november-2026'],
+  pullquote:'The public’s access to information must never depend on whether that information flatters the government.',
+  blocks:[
+   opinion('It is damning when a government restricts the information available to the people it claims to serve. Our view is that silencing an independent newspaper betrays a basic obligation of public office: to answer scrutiny. Ethiopians should be able to read critical reporting, compare competing accounts and reach their own conclusions.'),
+   heading('What Human Rights Watch reports'),
+   claim('In a November 3, 2026 dispatch, Human Rights Watch’s Laetitia Bader reports that the Ethiopian Media Authority announced the immediate, indefinite suspension of the Reporter’s print and online licenses on November 2. HRW describes the outlet as Ethiopia’s last privately owned Amharic newspaper.','hrw-reporter-november-2026'),
+   claim('According to HRW, the authority alleged repeated violations of law and media ethics, invoking national interests and claiming that the newspaper’s content harmed investment, tourism and diplomacy. These are the authority’s allegations as reported by HRW; this editorial does not independently establish them.','hrw-reporter-november-2026'),
+   heading('The public pays the price'),
+   opinion('A newspaper belongs to its owners, but the consequences of silencing it reach every reader. People need independent information to question public spending, evaluate official promises and understand decisions made in their name. Restricting that information makes accountability harder and leaves citizens with fewer ways to challenge the official account.'),
+   opinion('Concern for a country’s reputation should never become a shield against uncomfortable reporting. If officials believe a story is wrong, they should identify the error, publish evidence and allow a response. Closing an entire outlet indefinitely is an unacceptable substitute for answering its journalism.'),
+   opinion('The danger extends beyond one newsroom. Our concern is the chilling message such a suspension sends: investigate too closely, or publish something politically inconvenient, and your ability to operate may disappear. A public debate shaped by that fear cannot give citizens the scrutiny they deserve.'),
+   heading('Restore the space for scrutiny'),
+   opinion('The Ethiopian authorities should lift the suspension and make the basis of their decision available for public examination. Any specific complaint should be addressed through a transparent process with an opportunity to respond and independent review. Journalism should remain open to criticism and correction; government power must face at least the same scrutiny.'),
+   opinion('The public’s access to information must never depend on whether that information flatters the government. We condemn the restriction described in HRW’s report because an informed public is essential to accountable government. Ethiopia’s leaders should earn trust by facing questions openly and protecting the space in which those questions can be asked.')
+  ]
+ },
  abiyRecord,
  {
   ...base,
